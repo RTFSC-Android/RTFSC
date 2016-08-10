@@ -192,16 +192,18 @@ public void setVisibility(int visibility) {
 注意点： `setVisibility`方法中也可能会调用`inflate()`方法，所以需要注意的是 不要即调用setvisibility来设置可见，再接着调用`inflate`方法！  
 
 
-# 要点小结
+## 要点小结
 
-源码分析完毕，可以看到，ViewStub的源码还是非常简单的，但是作用还是非常大的，可以多使用一下。
+源码分析完毕，可以看到，ViewStub的源码还是非常简单的，但是作用还是挺大的。
 
 稍微总结一下要点：  
 
 1. 在XML里配置ViewStub的可见性是没有用的  
 2. ViewStub 主要原来在`inflate()`方法，是它把真正要加载的View给加载了进来  
-2. `inflate()`方法只能调用一次
-3. 小心`setVisibility`方法
-5. 在XML里给ViewStub设置的LayoutParamas(宽高)会被传递给StubbedView
+3. `inflate()`方法只能调用一次
+4. ViewStub调用`inflate()`后就不要再用它了（让它功成身退！）
+5. 小心`setVisibility`方法
+6. 在XML里给ViewStub设置的LayoutParamas(宽高margin等)会传递给StubbedView,所以我们如果要控制StubbedView的LayoutParamas，则需要写在ViewStub里而不是StubbedView！  
+6. 期待补充！  
 
 
