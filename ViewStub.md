@@ -3,9 +3,11 @@
 	public final class ViewStub extends View 
 
 
-简介：ViewStub 是一个宽高为0，不参与measure与layout，不绘制任何东西，可以用来做懒加载的View；常用于布局优化；  
+简介：ViewStub 是一个宽高都为0，不可见的(GONE)，不参与measure与layout(绝大部分情况)，不绘制任何东西，可以用来做懒加载的View；常用于布局优化；  
 
-本文涉及到两个角色，一个是 ViewStub本身，另外一个是被用来做懒加载的View，是ViewStub的作用对象，称之为`StubbedView`（本文用此称呼来替代）。  
+PS: 为什么说绝大部分情况不参与测量与布局呢？因为大部分ViewGroup对于GONE的View，都不会让它参与测量与布局流程（自定义的就不一定了，另外可以看一下FrameLayout的源码）。
+
+首先需要说的是，本文涉及到两个角色，一个是 ViewStub本身，另外一个是被用来做懒加载的View，是ViewStub的作用对象，称之为『StubbedView』（本文用此称呼来替代）。  
 
 
 ## `ViewStub`的简单使用教程 
@@ -194,14 +196,12 @@ public void setVisibility(int visibility) {
 
 ## 要点
 
-稍微总结一下要点：  
-
 0. 使用ViewStub，必须指定layoutResourceId
 1. 在XML里配置ViewStub的可见性是没有用的  
 2. ViewStub 主要原来在`inflate()`方法，是它把真正要加载的View给加载了进来  
 3. `inflate()`方法只能调用一次
 4. ViewStub调用`inflate()`后就不要再用它了（让它功成身退！）
-5. 小心`setVisibility`方法
+5. 要小心`setVisibility`方法，因为它可能会调用`inflate()`
 6. 在XML里给ViewStub设置的LayoutParamas(宽高margin等)会传递给StubbedView,所以我们如果要控制StubbedView的LayoutParamas，则需要写在ViewStub里而不是StubbedView！  
 6. 期待补充！  
 
@@ -209,4 +209,4 @@ public void setVisibility(int visibility) {
 
 源码分析完毕，可以看到，ViewStub的源码还是非常简单的，但是作用还是挺大的。
 
-
+	最后编辑时间：2016.08.11
