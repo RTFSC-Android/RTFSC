@@ -1,22 +1,25 @@
 # ViewStub 源码分析
 
+
+## 简介
+
+
 	public final class ViewStub extends View 
 
-
-简介：ViewStub 是一个宽高都为0，不可见的(GONE)，不参与measure与layout(绝大部分情况)，不绘制任何东西，可以用来做懒加载的View；常用于布局优化；  
+  ViewStub 是一个宽高都为0，不可见的(GONE)，不参与measure与layout(绝大部分情况)，不绘制任何东西，可以用来做懒加载的View；常用于布局优化；  
 
 PS: 为什么说绝大部分情况不参与测量与布局呢？因为大部分ViewGroup对于GONE的View，都不会让它参与测量与布局流程（自定义的就不一定了，另外可以看一下FrameLayout的源码）。
 
 首先需要说的是，本文涉及到两个角色，一个是 ViewStub本身，另外一个是被用来做懒加载的View，是ViewStub的作用对象，称之为『StubbedView』（本文用此称呼来替代）。  
 
 
-## `ViewStub`的简单使用教程 
+## ViewStub的简单使用教程 
 
 `ViewStub` 的使用非常非常简单，只需要两步~  
 
 Step 1. 在XML里配置使用：
 
-```xml
+```  
 <ViewStub
 	android:id="@+id/stub"  // 这个id是ViewStub的id
     android:layout_width="match_parent"
@@ -43,7 +46,7 @@ View stubbedView = stub.inflate();
 
 首先分析一下构造方法，了解一下它是如何创建的。  
 
-```java
+```
 public ViewStub(Context context, @LayoutRes int layoutResource) {
     this(context, null);
     // StubbedView的资源id
@@ -185,7 +188,7 @@ public void setVisibility(int visibility) {
         super.setVisibility(visibility);
         // 如果是 VISIBLE INVISIBLE 则会去调用 inflate方法！！！！
         if (visibility == VISIBLE || visibility == INVISIBLE) {
-            inflate();
+            inflate();//注意这一行代码
         }
     }
 }

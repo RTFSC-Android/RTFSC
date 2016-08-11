@@ -1,16 +1,19 @@
 # Space 源码分析
 
+
+## 简介
+
 	public final class Space extends View
 
-简介：Space是一个轻量的View，可以在布局中被用来创建间隙；常用于布局优化；
+  Space是一个轻量的View，可以在布局中被用来创建间隙；常用于布局优化；
 
-PS：其实很多人根本不知道Space的存在呢！所以稍微提一下，比如以下场景的右侧小三角，就可以使用Space：  
+介于可能很多人根本不知道Space的存在！所以稍微提一下它的使用场景，比如以下场景的右侧小三角，就可以使用Space：  
 
 ![Space使用场景](http://ww2.sinaimg.cn/large/98900c07jw1f6pifwudkgj201k0110mp.jpg)
 
 在两个三角之间放置一个`Space`，两三角分别位于它的上下，控制它的高度就能控制三角之间的间隔。
 
-```xml
+```
 <RelativeLayout
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
@@ -75,10 +78,9 @@ public Space(Context context) {
 }
 ``` 
 
-跟ViewStub类似，Space在构造方法里并没有做什么事，当可见性为VISIBLE的时候，把它改为INVISIBLE了。
+跟ViewStub类似，Space在构造方法里做了一些操作：**当可见性为VISIBLE的时候，把它改为INVISIBLE了**。
 
 由于Space方法非常少，接下去直接都分析了。  
-
 
 ## 其余方法分析
 
@@ -127,7 +129,7 @@ protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 }
 ```
 
-Space跟ViewStub类似，`draw()`都为空方法，然后重写`onMeasure`，相比ViewStub，Space代码更加比较简单。
+Space跟ViewStub一个套路，`draw()`都为空方法，然后重写`onMeasure`，相比ViewStub，Space代码更加比较简单。
 
 另外一般我们使用Space都是会指定宽高，大部分走的是 EXACTLY的流程。  
 
@@ -143,5 +145,10 @@ ViewStub跟Space作为Android布局优化的常用手段，有着一些同样的
 
 - 不绘制(减少overDraw)  
 - 优化或者不参与测量与布局（提高整体布局的渲染速度） 
+
+
+[ViewStub源码分析](./ViewStub.md)
+
+	2016年8月11日下午2:41
 
 
