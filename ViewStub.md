@@ -34,7 +34,7 @@ Step 2. 调用ViewStub的`inflate`
 
 ```
 ViewStub stub = (ViewStub)findViewById(R.id.stub);
-View stubbedView = stub.inflate();
+View stubbedView = stub.inflate();//后面分析
 //...初始化StubbedView
 ```
 
@@ -80,7 +80,7 @@ public ViewStub(Context context, AttributeSet attrs, int defStyleAttr, int defSt
 }
 ```
 
-`ViewStub`在构造方法里不仅仅获取赋值属性，比较关键的是，还** 设置为不可见（跳过onMeasure与onLayout），不绘制**。
+`ViewStub`在构造方法里不仅仅获取赋值属性，比较关键的是，还 默认将ViewStub自己设置为不可见（跳过onMeasure与onLayout），不绘制。
 
 这里有一个要点：**在XML里配置ViewStub的可见性是没有用的**。    
 
@@ -165,12 +165,12 @@ public View inflate() {
 }
 ```
 
-我在每行代码上都加上了详细的注释，其实思路非常清晰，非常简单。  
+我在每行代码上都加上了详细的注释，主要的操作就是把StubbedView给Inflate出来，然后把它放到自己的位置，代码非常清晰，非常简单。  
 
 总结来说，其实`inflate`方法是做了一个『偷梁换柱』的操作，把 `StubbedView`动态的添加到自己原来的位置上，也因此实现了懒加载功能。  
 
 
-另外ViewStub还重写了View的`setVisibility`方法，让我们来分析一下：
+另外值得一提的是：ViewStub还重写了View的`setVisibility`方法，让我们来分析一下：
 
 ```
 public void setVisibility(int visibility) {
@@ -194,7 +194,9 @@ public void setVisibility(int visibility) {
 }
 ```
 
-注意点： `setVisibility`方法中也可能会调用`inflate()`方法，所以需要注意的是 不要即调用setvisibility来设置可见，再接着调用`inflate`方法！  
+可以看到`setVisibility`方法中也可能会调用`inflate()`方法，所以当我们想让StubbedView被加载进来，而我们不需要StubbedView的实例的时候，可以用`setVisibility（View.VISIBLE）`。
+
+不过需要注意的是 不要再接着调用`inflate`方法！  
 
 
 ## 要点
