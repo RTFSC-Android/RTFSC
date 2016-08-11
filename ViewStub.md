@@ -5,7 +5,7 @@
 
 简介：ViewStub 是一个宽高为0，不参与measure与layout，不绘制任何东西，可以用来做懒加载的View；常用于布局优化；  
 
-本文涉及到两个角色，一个是 ViewStub本身，另外一个是用来做懒加载的View，是ViewStub的作用对象，称之为`StubbedView`（本文用此称呼来替代）。  
+本文涉及到两个角色，一个是 ViewStub本身，另外一个是被用来做懒加载的View，是ViewStub的作用对象，称之为`StubbedView`（本文用此称呼来替代）。  
 
 
 ## `ViewStub`的简单使用教程 
@@ -75,7 +75,7 @@ public ViewStub(Context context, AttributeSet attrs, int defStyleAttr, int defSt
 }
 ```
 
-`ViewStub`在构造方法里不仅仅获取赋值属性，比较关键的是，还 ** 设置为不可见（跳过onMeasure与onLayout），不绘制**。
+`ViewStub`在构造方法里不仅仅获取赋值属性，比较关键的是，还** 设置为不可见（跳过onMeasure与onLayout），不绘制**。
 
 这里有一个要点：**在XML里配置ViewStub的可见性是没有用的**。    
 
@@ -100,7 +100,7 @@ protected void dispatchDraw(Canvas canvas) {
 }
 ```
 
-## inflate 分析
+## inflate()方法分析
 
 之前在简单教程里有提到 `inflate`方法，它是`ViewStub`实现懒加载的最为关键的方法，接下去去分析一下。  
 
@@ -192,12 +192,11 @@ public void setVisibility(int visibility) {
 注意点： `setVisibility`方法中也可能会调用`inflate()`方法，所以需要注意的是 不要即调用setvisibility来设置可见，再接着调用`inflate`方法！  
 
 
-## 要点小结
-
-源码分析完毕，可以看到，ViewStub的源码还是非常简单的，但是作用还是挺大的。
+## 要点
 
 稍微总结一下要点：  
 
+0. 使用ViewStub，必须指定layoutResourceId
 1. 在XML里配置ViewStub的可见性是没有用的  
 2. ViewStub 主要原来在`inflate()`方法，是它把真正要加载的View给加载了进来  
 3. `inflate()`方法只能调用一次
@@ -205,5 +204,9 @@ public void setVisibility(int visibility) {
 5. 小心`setVisibility`方法
 6. 在XML里给ViewStub设置的LayoutParamas(宽高margin等)会传递给StubbedView,所以我们如果要控制StubbedView的LayoutParamas，则需要写在ViewStub里而不是StubbedView！  
 6. 期待补充！  
+
+## 小结
+
+源码分析完毕，可以看到，ViewStub的源码还是非常简单的，但是作用还是挺大的。
 
 
