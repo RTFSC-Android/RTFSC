@@ -169,6 +169,7 @@ public View inflate() {
 
 总结来说，其实`inflate`方法是做了一个『偷梁换柱』的操作，把 `StubbedView`动态的添加到自己原来的位置上，也因此实现了懒加载功能。  
 
+这里还需要注意的是 **ViewStub 必须要有一个 Parent，即必须要有父视图！**（谢谢 JangGwa 的提醒）
 
 另外值得一提的是：ViewStub还重写了View的`setVisibility`方法，让我们来分析一下：
 
@@ -201,9 +202,9 @@ public void setVisibility(int visibility) {
 
 ## 要点
 
-0. 使用ViewStub，必须指定layoutResourceId
+0. 使用ViewStub，必须指定layoutResourceId(必须是布局文件)
 1. 在XML里配置ViewStub的可见性是没有用的  
-2. ViewStub 主要原来在`inflate()`方法，是它把真正要加载的View给加载了进来  
+2. ViewStub 主要原理藏在`inflate()`方法中，是它把真正要加载的View给加载了进来  
 3. `inflate()`方法只能调用一次
 4. ViewStub调用`inflate()`后就不要再用它了（让它功成身退！）
 5. 要小心`setVisibility`方法，因为它可能会调用`inflate()`
