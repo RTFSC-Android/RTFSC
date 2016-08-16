@@ -189,13 +189,47 @@ public View inflate(XmlPullParser parser, @Nullable ViewGroup root, boolean atta
 
 1. 调用`root.generateLayoutParams`方法来生成`LayoutParamas`并赋值给`paramas`
 2. 然后如果`attachToRoot`为`false`，则把`paramas`赋值给`createViewFromTag`解析出来的`temp`（XML里的根布局）
-3. 而如果`attachToRoot`为`true`的话，则会 调用`root.addView(temp, params);`直接把`temp`给加到`root`里去。
+3. 而如果`attachToRoot`为`true`的话，则会 调用`root.addView(temp, params);` **直接把`temp`给加到`root`里去**。如果我们自己再调用`addView`则会报错！
 
-`attachToRoot`的主要影响是 **被inflate出来的View是否直接add到root去**。
+
+这里再提一下`root` 对`topView`的`LayoutParamas`的影响：
+
+需要先提一下 LayoutParamas 一般有3种来源：
+
+1. 用户完全自定义 自己 `new` 出来
+2. ViewGroup.generateLayoutParams 方法生成 上面已经提到
+3. ViewGroup.generateDefaultLayoutParams 方法生成，在`addView`的时候 如果 `childView` 没有的话，会由这个方法生成。
+
+addView 里对 paramas 的操作：
+
+```
+public void addView(View child) {
+    addView(child, -1);
+}
+public void addView(View child, int index) {
+    if (child == null) {
+        throw new IllegalArgumentException("Cannot add a null child view to a ViewGroup");
+    }
+    LayoutParams params = child.getLayoutParams();
+    if (params == null) {
+    	// 没有 params 则调用 generateDefaultLayoutParams 去生成
+        params = generateDefaultLayoutParams();
+        if (params == null) {
+            throw new IllegalArgumentException("generateDefaultLayoutParams() cannot return null");
+        }
+    }
+    addView(child, index, params);
+}
+```
+
+所以当 root 不为 null 的时候，topview 的 paramas 是通过`generateLayoutParams`生成的。  
+
+需要注意的是：`generateLayoutParams`与`generateDefaultLayoutParams`生成的 paramas 是不同的，所以它会影响到布局效果。  
+
 
 第二种 当`root`是`null`的时候：  
 
-是`null`的时候会返回`temp`  
+是`null`的时候会返回`temp` （XML里的根布局）
 
 ```
 // null 或是 false 那么result=temp
@@ -203,6 +237,7 @@ if (root == null || !attachToRoot) {
     result = temp;
 }
 ```
+
 
 大致总结成流程图如下所示：  
 
@@ -455,16 +490,12 @@ public final View createView(String name, String prefix, AttributeSet attrs)
 - `onCreateView`： 处理系统自带View的路径，`android.view.`，实际调用的还是`createView`方法
 - `createView`：  真正实例化View的地方，通过View的路径去加载类并获取构造方法，通过反射获取View的实例。
 
-本篇解决了一些疑问，但是还有好多疑问没有解决，继续探索。
+本篇解决了一些疑问：
+
+- 上述方法中的`root`、`attachToRoot`究竟有什么作用？
+- 它究竟是在哪里实例化View又是如何如何加载布局的？
+- 为什么系统的View我们在Xml里不需要写全路径，而自定义View却需要？
+
+但是还有好多疑问没有解决，所以需要继续探索。
 
 下一篇着重分析`merge`、`include`等标签是如何处理的。
-
-但是暂时还不能松懈，因为还有好多疑问没有解决，比如`merge`、`include`怎么处理的~
-
-## 总结
-
-View是如何创建的
-
-include，merge等是怎么处理的？
-inflate的参数都是什么意思，有什么作用？
-Factory的hook与功能
