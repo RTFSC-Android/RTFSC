@@ -185,7 +185,7 @@ public View inflate(XmlPullParser parser, @Nullable ViewGroup root, boolean atta
 
 围绕`root`是否为`null`有两种处理分支：
 
-第一种 当`root`不是`null`的时候：
+第一种 当`root`不为`null`的时候：
 
 1. 调用`root.generateLayoutParams`方法来生成`LayoutParamas`并赋值给`paramas`
 2. 然后如果`attachToRoot`为`false`，则把`paramas`赋值给`createViewFromTag`解析出来的`temp`（XML里的根布局）
@@ -224,10 +224,10 @@ public void addView(View child, int index) {
 
 所以当 root 不为 null 的时候，topview 的 paramas 是通过`generateLayoutParams`生成的。  
 
-需要注意的是：`generateLayoutParams`与`generateDefaultLayoutParams`生成的 paramas 是不同的，所以它会影响到布局效果。  
+需要注意的是：`generateLayoutParams`与`generateDefaultLayoutParams`生成的 paramas 是不同的,会无视我们在 xml 里配置的属性，所以它会影响到布局效果。  
 
 
-第二种 当`root`是`null`的时候：  
+第二种 当`root`为`null`的时候：  
 
 是`null`的时候会返回`temp` （XML里的根布局）
 
@@ -238,6 +238,9 @@ if (root == null || !attachToRoot) {
 }
 ```
 
+也可以看到，`root==null`如果成立，那么`attachToRoot`也就没有用了。
+
+所以`attachToRoot`只有在`root`不为 null 的时候才有效。  
 
 大致总结成流程图如下所示：  
 
