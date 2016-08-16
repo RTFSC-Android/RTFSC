@@ -129,7 +129,7 @@ public View inflate(XmlPullParser parser, @Nullable ViewGroup root, boolean atta
                 if (DEBUG) {
                     System.out.println("-----> start inflating children");
                 }
-                // 源码的打印日志已经告诉我，这里是加载子View的~~
+                // 源码的打印日志已经告诉我，这里是加载子View的~~ 后续再讲解
                 // Inflate all children under temp against its context.
                 rInflateChildren(parser, temp, attrs, true);
 
@@ -499,6 +499,6 @@ public final View createView(String name, String prefix, AttributeSet attrs)
 - 它究竟是在哪里实例化View又是如何如何加载布局的？
 - 为什么系统的View我们在Xml里不需要写全路径，而自定义View却需要？
 
-但是还有好多疑问没有解决，所以需要继续探索。
+但是还有好多疑问没有解决，也还有部分重要的方法没有解析，所以需要继续探索。  
 
 下一篇着重分析`merge`、`include`等标签是如何处理的。
