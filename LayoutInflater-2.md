@@ -169,6 +169,7 @@ private void parseInclude(XmlPullParser parser, Context context, View parent,
         }
         // 之前的代码都是处理 theme layout 属性 不多说。
         if (layout == 0) {
+        	// 必须指定有效的layout
             final String value = attrs.getAttributeValue(null, ATTR_LAYOUT);
             throw new InflateException("You must specify a valid layout "
                     + "reference. The layout ID " + value + " is not valid.");
@@ -215,16 +216,17 @@ private void parseInclude(XmlPullParser parser, Context context, View parent,
                     // means we successfully loaded layout params from the <include>
                     // tag, false means we need to rely on the included layout params.
                     ViewGroup.LayoutParams params = null;
-                    try {
+                    try {// 尝试对 include 标签生成 params
                         params = group.generateLayoutParams(attrs);
                     } catch (RuntimeException e) {
                         // Ignore, just fail over to child attrs.
                     }
+                    // 如果失败 则对被 include 的 topview 处理
                     if (params == null) {
                         params = group.generateLayoutParams(childAttrs);
                     }
                     view.setLayoutParams(params);
-                    // Inflate all children.
+                    // Inflate all children.  前面已经提到过了
                     rInflateChildren(childParser, view, childAttrs, true);
                     // 处理 id
                     if (id != View.NO_ID) {
@@ -257,13 +259,41 @@ private void parseInclude(XmlPullParser parser, Context context, View parent,
 }
 ```
 
-首先判断 parent 是不是个 ViewGroup,如果不是则直接抛异常。
-如果是则接下去处理 theme 属性以及 layout 属性，我们知道 layout 属性是必须要有的，源码中如果发现没有指定 layout 的话，那么会直接抛出异常。
+首先判断 parent 是不是个 ViewGroup,如果不是则直接抛异常。  
 
-再接下去的步骤可以看出其实跟上篇`inflate`方法类似
-1. 通过调用`createViewFromTag`解析获取被`include`的 topview
-2. 
+如果是则接下去处理 `theme` 属性以及 `layout` 属性，我们知道使用`include`标签，`layout` 属性是必须要有的。  
 
+其原因就是在源码中如果发现没有指定 `layout` 属性的话，那么会直接抛出异常。  
+
+再接下去的步骤可以看出其实跟上篇`inflate`方法类似：  
+
+1. 通过调用`createViewFromTag`解析获取被`include`的 `topview`
+2. 生成 `params`，这里要注意，`include`标签可能没有宽高，会导致生成失败，所以如果失败则接着又对被`include`的 topview 做操作。所以使用`include`的时候，不对它设置宽高是没有关系的。
+3. 调用`rInflateChildren`处理子View 之前已经分析过
+4. 如果有的话，把 `include` 标签的 `id` 以及 `visibility`属性 设置给 `topview`
+5. `topView` 被 add 进 group，这样被 include 的 topView 就被加到布局里去了。
+
+
+## 小结
+
+通过阅读源码，其实使用 merge 以及 include 等标签处理其实并不难，而且它们的使用方法在源码中皆有体现。
+
+稍微总结一下要点：
+
+1. 使用 LayoutInflater 去 inflate merge 标签的时候，root 一定不能为 null，attachToRoot 也不能为 false  
+2. merge标签在 XML 中**必须是根元素**  
+3. 与 merge 标签相反，include 绝对不能是根元素，必须需要在一个 ViewGroup 中使用  
+4. 使用 include 标签必须指定有效的 layout 属性  
+5. 使用 include 标签不写宽高是没有关系的（会去解析被 include 的 layout）  
+
+
+到这里`merge`以及`include`已经分析完毕。  
+
+同时也看到了其他标签如`tag`、`requestFocus`的处理，但是就是没看到`fragment`标签。
+
+那究竟是在哪处理`fragment`标签的呢？
+
+下一篇再讲解。  
 
 
 
