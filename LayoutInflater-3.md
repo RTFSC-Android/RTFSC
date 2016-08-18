@@ -46,9 +46,7 @@ if (view == null && mPrivateFactory != null) {
 
 大致的画了一张类图
 
-![Factory](http://ww2.sinaimg.cn/large/98900c07jw1f6y3urd07wj21560lsjul.jpg)
-
-<img src="http://ww2.sinaimg.cn/large/98900c07jw1f6y3urd07wj21560lsjul.jpg" width="400" height="300"/>
+<img src="http://ww2.sinaimg.cn/large/98900c07jw1f6y3urd07wj21560lsjul.jpg" width="741" height="392"/>
 
 前面代码中的mPrivateFactory 是个 FactoryMerger 对象。
 
@@ -61,7 +59,8 @@ if (view == null && mPrivateFactory != null) {
 
 查看了源码后发现，FragmentActivity的继承结构如下 
 
-![FragmentActivity](http://ww3.sinaimg.cn/large/98900c07jw1f6wnvk60gkj20fq0r0wfs.jpg)
+<img src="http://http://ww3.sinaimg.cn/large/98900c07jw1f6wnvk60gkj20fq0r0wfs.jpg" width="398" height="400"/>
+
 
 其实 Activity 就已经实现了 LayoutInflater.Factory2 接口，具体实现如下：
 
