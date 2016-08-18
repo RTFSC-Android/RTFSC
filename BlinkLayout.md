@@ -1,4 +1,13 @@
-# BlinkLayout源码分析
+# LayoutInflater 源码分析（四）之 闪耀的彩蛋
+
+
+[LayoutInflater 源码分析（一）之 inflate 深度分析](./LayoutInflater.md)  
+[LayoutInflater 源码分析（二）之 include 以及 merge 标签的处理](./LayoutInflater-2.md)  
+[LayoutInflater 源码分析（三）之 fragment 标签的处理](LayoutInflater-3.md)  
+[LayoutInflater 源码分析（四）之 闪耀的彩蛋](./BlinkLayout.md)
+
+
+## BlinkLayout源码分析
 
 	private static class BlinkLayout extends FrameLayout
 

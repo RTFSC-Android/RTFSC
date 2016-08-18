@@ -1,4 +1,12 @@
-# LayoutInflater 源码分析（三）
+# LayoutInflater源码分析（三）之 fragment 标签的处理
+
+
+[LayoutInflater 源码分析（一）之 inflate 深度分析](./LayoutInflater.md)  
+[LayoutInflater 源码分析（二）之 include 以及 merge 标签的处理](./LayoutInflater-2.md)  
+[LayoutInflater 源码分析（三）之 fragment 标签的处理](LayoutInflater-3.md)  
+[LayoutInflater 源码分析（四）之 闪耀的彩蛋](./BlinkLayout.md)
+
+## 前言
 
 上一篇[LayoutInflater 源码分析（二）](./LayoutInflater-2.md)中分析了`LayoutInflater`对`include`以及`merge`标签的处理，但是并没有找到对`fragment`的处理痕迹。
 
@@ -15,6 +23,8 @@
     android:id="@+id/main"
     />
 ```
+
+## 分析
 
 在第一篇分析中提到了 Factory 的 Hook 机制，代码如下:
 

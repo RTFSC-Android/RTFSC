@@ -1,10 +1,20 @@
-# LayoutInflater 源码分析（二）
+# LayoutInflater 源码分析（二）之 include 以及 merge 标签的处理
+
+
+[LayoutInflater 源码分析（一）之 inflate 深度分析](./LayoutInflater.md)  
+[LayoutInflater 源码分析（二）之 include 以及 merge 标签的处理](./LayoutInflater-2.md)  
+[LayoutInflater 源码分析（三）之 fragment 标签的处理](LayoutInflater-3.md)  
+[LayoutInflater 源码分析（四）之 闪耀的彩蛋](./BlinkLayout.md)
+
+
+## 前言
 
 继上篇[LayoutInflater 源码分析（一）](./LayoutInflater.md)  
 
 本篇继续对`LayoutInflater`进行源码分析，目标为分析`LayoutInflater`对`include`、`merge`、`fragment`等标签的处理原理。  
 
-## merge 标签
+## merge 标签分析
+
 [上篇](./LayoutInflater.md)讲到`inflate`方法中出现 Merge 的踪迹，代码如下：
 
 ```
