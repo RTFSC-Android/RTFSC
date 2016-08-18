@@ -46,7 +46,9 @@ if (view == null && mPrivateFactory != null) {
 
 大致的画了一张类图
 
-![Factory](http://ww4.sinaimg.cn/large/98900c07jw1f6wndhrquvj21560lsad0.jpg)
+![Factory](http://ww2.sinaimg.cn/large/98900c07jw1f6y3urd07wj21560lsjul.jpg)
+
+<img src="http://ww2.sinaimg.cn/large/98900c07jw1f6y3urd07wj21560lsjul.jpg" width="400" height="300"/>
 
 前面代码中的mPrivateFactory 是个 FactoryMerger 对象。
 
@@ -272,12 +274,14 @@ View performCreateView(LayoutInflater inflater, ViewGroup container,
     if (mChildFragmentManager != null) {
         mChildFragmentManager.noteStateNotSaved();
     }
-    // 调用onCreateView
+    // 调用onCreateView 熟悉吧？
     return onCreateView(inflater, container, savedInstanceState);
 }
 ```
 
 可以看到，`FragmentManager`的`moveToState`中会去调用`Fragment`的`performCreateView`方法，而它里面，调用了`onCreateView`！！
+
+`onCreateView`熟悉吧？就是我们使用 `Fragment` 第一个重写的方法！
 
 终于找到啦！！  
 
@@ -291,7 +295,7 @@ View performCreateView(LayoutInflater inflater, ViewGroup container,
 
 `FragmentActivity`通过 `setFactory`把对`fragment`标签的处理委托给了 `FragmentManageImpl`的`onCreateView`方法。
 
-最终通过反射，实例化指定的 `Fragment`，并最终调用了`Fragment.performCreateView`。  
+最终通过反射，实例化指定的 `Fragment`，并调用了`Fragment.performCreateView`，最后到我们所熟悉的`onCreateView`。  
 
 另外要说的是，`LayoutInflater.Factory`的作用其实非常强大，还可以实现夜间模式等功能，Support 包的主题切换原理就是这了，有机会再讲吧。  
 
