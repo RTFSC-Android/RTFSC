@@ -296,5 +296,7 @@ View performCreateView(LayoutInflater inflater, ViewGroup container,
 
 最终通过反射，实例化指定的 `Fragment`，并调用了`Fragment.performCreateView`，最后到我们所熟悉的`onCreateView`。  
 
-另外要说的是，`LayoutInflater.Factory`的作用其实非常强大，还可以实现夜间模式等功能，Support 包的主题切换原理就是这了，有机会再讲吧。  
+另外要说的是，`LayoutInflater.Factory`的作用其实非常强大，比如 `AppCompact`的向下兼容功能（可以看看`AppCompactActivity`、`AppCompactViewInflater`类），也还可以配合 DayNight 实现夜间模式功能，有机会再讲吧。  
+
+
 
