@@ -59,7 +59,7 @@ if (view == null && mPrivateFactory != null) {
 
 查看了源码后发现，FragmentActivity的继承结构如下 
 
-<img src="http://http://ww3.sinaimg.cn/large/98900c07jw1f6wnvk60gkj20fq0r0wfs.jpg" width="398" height="400"/>
+<img src="http://ww3.sinaimg.cn/large/98900c07jw1f6wnvk60gkj20fq0r0wfs.jpg" width="398" height="400"/>
 
 
 其实 Activity 就已经实现了 LayoutInflater.Factory2 接口，具体实现如下：
