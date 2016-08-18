@@ -7,6 +7,18 @@
 
 因为它隐藏的非常深，是`LayoutInflater`的静态内部类，是我在看`LayoutInflater`源码的时候发现的！简直是个彩蛋！！    
 
+在这里发现的：  
+
+```
+if (name.equals(TAG_1995)) {
+    // Let's party like it's 1995!
+    return new BlinkLayout(context, attrs);
+}
+```
+
+oh,它其实还真算是个彩蛋，似乎是为了庆祝1995年的复活节，有兴趣可以看看
+[reddit](https://www.reddit.com/r/androiddev/comments/3sekn8/lets_party_like_its_1995_from_the_layoutinflater/)上的讨论。  
+
 
 blink 有 使...闪烁的意思，可以用来做一闪一闪的效果哦！！！ 
 
