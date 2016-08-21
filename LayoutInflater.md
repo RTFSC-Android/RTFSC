@@ -28,7 +28,7 @@ PS：`LayoutInflater`的获取方式还有很多种。
 上述代码我写过无数遍，但是心中一直有很多疑问：  
 
 - 上述方法中的`root`、`attachToRoot`究竟有什么作用？
-- 它究竟是在哪里实例化View又是如何如何加载布局的？
+- 它究竟是在哪里实例化View又是如何去实例化 View 的？
 - 为什么系统的View我们在Xml里不需要写全路径，而自定义View却需要？
 - 它又是如何处理`fragment`以及各种标签如`include`、`merge`的？
 - `View`的`onFinishInflate`是否跟它有关呢？
@@ -515,3 +515,9 @@ public final View createView(String name, String prefix, AttributeSet attrs)
 篇幅太长了，所以先小结一下，换一篇继续。
 
 下一篇着重分析`merge`、`include`等标签是如何处理的。
+
+已经写好啦：[LayoutInflater 源码分析（二）之 include 以及 merge 标签的处理](./LayoutInflater-2.md)  
+
+
+
+

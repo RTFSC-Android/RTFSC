@@ -11,7 +11,9 @@
 
 继上篇[LayoutInflater 源码分析（一）](./LayoutInflater.md)  
 
-本篇继续对`LayoutInflater`进行源码分析，目标为分析`LayoutInflater`对`include`、`merge`、`fragment`等标签的处理原理。  
+本篇继续对`LayoutInflater`进行源码分析。
+
+目标为分析`LayoutInflater`对`include`、`merge`、`fragment`等标签的处理原理以及`onFinishInflate`的调用时机。  
 
 ## merge 标签分析
 
@@ -87,7 +89,7 @@ void rInflate(XmlPullParser parser, View parent, Context context,
 }	
 ```
 
-从注释来看`rInflate`方法，是个 **递归方法** 实例化 View 以及它的子 View,并且调用 `onFinishInflate` 
+从注释来看`rInflate`方法，是个 **递归方法** 实例化 View 以及它的子 View,**并且调用 `onFinishInflate`** 
 
 从源码来看，`rInflate`方法先判断特殊的标签名，优先处理：
 - 针对`requestFocus`标签,调用parseRequestFocus方法
@@ -278,15 +280,14 @@ private void parseInclude(XmlPullParser parser, Context context, View parent,
 再接下去的步骤可以看出其实跟上篇`inflate`方法类似：  
 
 1. 通过调用`createViewFromTag`解析获取被`include`的 `topview`
-2. 生成 `params`，这里要注意，`include`标签可能没有宽高，会导致生成失败，所以如果失败则接着又对被`include`的 topview 做操作。所以使用`include`的时候，不对它设置宽高是没有关系的。
+2. 生成 `params`，这里要注意，`include`标签可能没有宽高，会导致生成失败，如果失败则接着又对被`include`的 topview 做操作。所以使用`include`的时候，**不对它设置宽高是没有关系的**。
 3. 调用`rInflateChildren`处理子View 之前已经分析过
-4. 如果有的话，把 `include` 标签的 `id` 以及 `visibility`属性 设置给 `topview`
-5. `topView` 被 add 进 group，这样被 include 的 topView 就被加到布局里去了。
-
+4. 把 `include` 标签的 `id` 以及 `visibility`属性 设置给 `topview`（如果有的话）
+5. `topView` 被直接 add 进 group，这样被 include 的 topView 就被加到布局里去了。
 
 ## 小结
 
-通过阅读源码，其实使用 merge 以及 include 等标签处理其实并不难，而且它们的使用方法在源码中皆有体现。
+通过阅读源码，其实 merge 以及 include 等标签处理其实并不难，而且它们的使用方法在源码中皆有体现。
 
 稍微总结一下要点：
 
@@ -296,14 +297,14 @@ private void parseInclude(XmlPullParser parser, Context context, View parent,
 4. 使用 include 标签必须指定有效的 layout 属性  
 5. 使用 include 标签不写宽高是没有关系的（会去解析被 include 的 layout）  
 
-
 到这里`merge`以及`include`已经分析完毕。  
 
-同时也看到了其他标签如`tag`、`requestFocus`的处理，但是就是没看到`fragment`标签。
+同时也看到了其他标签如`tag`、`requestFocus`的处理（很简单就不分析了），但是就是没看到`fragment`标签。
 
 那究竟是在哪处理`fragment`标签的呢？
 
-下一篇再讲解。  
+请看下集[LayoutInflater 源码分析（三）之 fragment 标签的处理](LayoutInflater-3.md)  
+
 
 
 

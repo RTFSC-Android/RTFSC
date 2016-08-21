@@ -24,6 +24,10 @@
     />
 ```
 
+注意：这属于加载 Fragment 中的**静态加载**，在 XML 中写死了 class，缺乏灵活性，实际开发中并不常用，甚至已经淘汰了，所以不推荐使用。
+
+不过这并不妨碍对它的原理探究。
+
 ## 分析
 
 在第一篇分析中提到了 Factory 的 Hook 机制，代码如下:
@@ -44,23 +48,21 @@ if (view == null && mPrivateFactory != null) {
 
 ```
 
-大致的画了一张类图
+为了便于理解那些个 Factory，特意大致的画了一张类图：
 
 <img src="http://ww2.sinaimg.cn/large/98900c07jw1f6y3urd07wj21560lsjul.jpg" width="741" height="392"/>
 
-前面代码中的mPrivateFactory 是个 FactoryMerger 对象。
+注意：前面代码中的mPrivateFactory 是个 FactoryMerger 对象。  
 
-
-回想我们在使用 Fragment 的时候都会继承 FragmentActivity，所以去 FragmentActivity 寻找答案比较靠谱。
+可能看到这里还是会有些茫然，不过仔细一回想我们在使用 Fragment 的时候都会继承 FragmentActivity，所以去 FragmentActivity 寻找答案感觉比较靠谱。
 
 接下去开始分析。
 
-## 寻找踪迹 
+## 寻找踪迹 FragmentActivity
 
-查看了源码后发现，FragmentActivity的继承结构如下 
+查看了源码后发现，FragmentActivity 的继承结构如下 
 
 <img src="http://ww3.sinaimg.cn/large/98900c07jw1f6wnvk60gkj20fq0r0wfs.jpg" width="398" height="400"/>
-
 
 其实 Activity 就已经实现了 LayoutInflater.Factory2 接口，具体实现如下：
 
@@ -81,11 +83,12 @@ public View onCreateView(String name, Context context, AttributeSet attrs) {
 
 可以看到如果是 fragment 标签，则会交给一个叫 mFragments 的FragmentController类的对象。
 
-但是需要注意的是Activity 没有调用 LayoutInflater.setFactory 所以 Activity 并不支持 fragment 的解析。
+但是需要注意的是：**Activity 并没有调用 LayoutInflater.setFactory 使之生效，所以 Activity 并不支持 fragment 的解析**。
 
-继续它的子类的实现。
+继续看它的子类的实现。
 
 ```
+// Donut 好古老的版本啊~
 abstract class BaseFragmentActivityDonut extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +114,7 @@ abstract class BaseFragmentActivityDonut extends Activity {
             Context context, AttributeSet attrs);
 
 }
-
+// Honeycomb
 abstract class BaseFragmentActivityHoneycomb extends BaseFragmentActivityDonut {
     @Override
     public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
@@ -134,11 +137,11 @@ public class FragmentActivity extends BaseFragmentActivityHoneycomb{
 }
 ```
 
-可以看到，在`BaseFragmentActivityDonut`中调用了`setFactory`，并定义了一个`dispatchFragmentsOnCreateView`抽象方法，在`onCreateView`里调用了它。
+可以看到，在`BaseFragmentActivityDonut`中调用了`setFactory`，并定义了一个`dispatchFragmentsOnCreateView`抽象方法，并在`onCreateView`里调用了它，这样就把创建 View 的工作交给了`dispatchFragmentsOnCreateView`。
 
 接着，在 FragmentActivity 重写`dispatchFragmentsOnCreateView`，又把它交给了`mFragments`，咦，又回去了。
 
-其实到这里已经可以知道，`LayoutInflater`把处理`fragment`的事情交给了`FragmentManagerImpl`。
+其实到这里已经可以知道，`LayoutInflater`把处理`fragment`的事情最终交给了`FragmentManagerImpl`。
 
 而对于`FragmentManagerImpl`的分析其实已经超过了本文的界限。  
 
@@ -296,7 +299,11 @@ View performCreateView(LayoutInflater inflater, ViewGroup container,
 
 最终通过反射，实例化指定的 `Fragment`，并调用了`Fragment.performCreateView`，最后到我们所熟悉的`onCreateView`。  
 
-另外要说的是，`LayoutInflater.Factory`的作用其实非常强大，比如 `AppCompact`的向下兼容功能（可以看看`AppCompactActivity`、`AppCompactViewInflater`类），也还可以配合 DayNight 实现夜间模式功能，有机会再讲吧。  
+整体的流程分析完毕。  
+
+另外要说的是，`LayoutInflater.Factory`的作用其实非常强大，我们可以 Hook 每个 View 的创建于设置，比如 `AppCompact`库通过`AppCompactViewInflater` Hook 了大部分 View，给我们提供了向下兼容的功能；
+
+另外它也还可以配合 DayNight 实现夜间模式功能，有兴趣可以去看看`AppCompactActivity`、`AppCompactViewInflater`等类，有机会再讲吧。  
 
 
 
