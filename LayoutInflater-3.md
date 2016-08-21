@@ -305,5 +305,6 @@ View performCreateView(LayoutInflater inflater, ViewGroup container,
 
 另外它也还可以配合 DayNight 实现夜间模式功能，有兴趣可以去看看`AppCompactActivity`、`AppCompactViewInflater`等类，有机会再讲吧。  
 
+到此对于 LayoutInflater 的源码分析已经结束，在查看源码的过程中发现一枚彩蛋，有兴趣的可以继续阅读：[LayoutInflater 源码分析（四）之 闪耀的彩蛋](./BlinkLayout.md)
 
 
