@@ -75,7 +75,7 @@ public View inflate(XmlPullParser parser, @Nullable ViewGroup root, boolean atta
         final AttributeSet attrs = Xml.asAttributeSet(parser);
         Context lastContext = (Context) mConstructorArgs[0];
         mConstructorArgs[0] = inflaterContext;
-        // result赋值为我们传递的root
+        // 先把result赋值为我们传递的root
         View result = root;
 
         try {
@@ -204,9 +204,9 @@ public View inflate(XmlPullParser parser, @Nullable ViewGroup root, boolean atta
 
 1. 用户完全自定义 自己 `new` 出来
 2. ViewGroup.generateLayoutParams 方法生成 上面已经提到
-3. ViewGroup.generateDefaultLayoutParams 方法生成，在`addView`的时候 如果 `childView` 没有的话，会由这个方法生成。
+3. ViewGroup.generateDefaultLayoutParams 方法生成，在`addView`的时候 如果 `childView` 没有的话 LayoutParams 属性的话，会由这个方法生成。
 
-addView 里对 paramas 的操作：
+来看一下 addView 里对 paramas 的操作就明白了：
 
 ```
 public void addView(View child) {
@@ -490,8 +490,6 @@ public final View createView(String name, String prefix, AttributeSet attrs)
 
 ## 小结
 
-篇幅太长了，所以先小结一下，换一篇继续。
-
 这一篇中分析了如下方法(省去了参数)：
 
 - `inflate`：LayoutInflater对外开放的入口，这里分析了 root与attachToRoot 参数的作用。
@@ -502,9 +500,18 @@ public final View createView(String name, String prefix, AttributeSet attrs)
 本篇解决了一些疑问：
 
 - 上述方法中的`root`、`attachToRoot`究竟有什么作用？
-- 它究竟是在哪里实例化View又是如何如何加载布局的？
+    - 影响了`merge`标签，
+    - View是否直接被 add 到 root
+    - View 的 LayoutParams 从何而来
+    - inflate 方法的返回值
 - 为什么系统的View我们在Xml里不需要写全路径，而自定义View却需要？
+    - 针对系统 View，会帮忙拼全路径,所以不需要写全
+- 它究竟是在哪里实例化View又是如何实例化 View 的？
+    - 在  createView 方法中，默认利用反射实例化 View
+    - 也可通过 Factory hook 的方式实例化
 
 但是还有好多疑问没有解决，也还有部分重要的方法没有解析，所以需要继续探索。  
+
+篇幅太长了，所以先小结一下，换一篇继续。
 
 下一篇着重分析`merge`、`include`等标签是如何处理的。
