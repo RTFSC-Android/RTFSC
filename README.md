@@ -77,7 +77,8 @@ Android 源码的查看一般有以下几种方式：
 4. 加微信群『RTFSC』交流，加我微信，请注明来由。    
 
 如果过期，请加我微信。  
-![群名片](http://ww3.sinaimg.cn/large/98900c07gw1f759nreielj20u01biwhx.jpg)  
+
+<img src="http://ww3.sinaimg.cn/large/98900c07gw1f759nreielj20u01biwhx.jpg" width="300" height="400"/>
 
 ![我的微信](http://ww3.sinaimg.cn/thumbnail/98900c07gw1f2f30b7cs5j20e80e80tx.jpg)    
 
