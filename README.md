@@ -73,7 +73,7 @@ Android 源码的查看一般有以下几种方式：
 
 1. 加入 Github 组织，提 issue 留下意向，github 昵称或者邮件，以及博客地址，我看到验证后会发送邀请。
 2. 加入 Tower，我正在使用 Tower 作为源码阅读的计划与管理工具，感觉挺不错的，也方便查看成员的计划与动态，有兴趣的点[邀请链接](https://tower.im/join?t=bc25cd4a8571075ba0edc9b50cb3ba39)。
-3. 加入 钉钉，有兴趣的点[邀请链接(https://t.dingtalk.com/invite/index?code=9e319b7cf7&inviterUid=F56384EBC8CCEE72)
+3. 加入 钉钉，有兴趣的点[邀请链接](https://t.dingtalk.com/invite/index?code=9e319b7cf7&inviterUid=F56384EBC8CCEE72)
 4. 加微信群『RTFSC』交流，加我微信，请注明来由。    
 
 如果过期，请加我微信。  
