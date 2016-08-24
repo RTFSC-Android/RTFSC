@@ -479,10 +479,16 @@ public final View createView(String name, String prefix, AttributeSet attrs)
 
 调来调去，终于到真正实例化View的地方了。  
 
-
 看到这方法的 `clazz = mContext.getClassLoader().loadClass(prefix != null ? (prefix + name) : name).asSubclass(View.class)` 步骤会把系统自带的`View`的路径拼起来，把类加载进来；
 
 然后`clazz.getConstructor(mConstructorSignature);`获取`View`的构造方法，最终通过反射`constructor.newInstance(args);`实例化View。  
+
+如果你足够机智，你会发现这里出来一个问题，WebView 怎么办？
+
+它的路径可是`android.webkit`啊~
+其实这里涉及到 LayoutInflater 的一个子类`com.android.internal.policy.PhoneLayoutInflater`，它处理了`android.widget.`、`android.webkit.`、`android.app.`这些路径。  
+
+**事实上，我们最开始使用`LayoutInflater.from(cxt)`获取的就是`PhoneLayoutInflater`的实例。**  
 
 另外这里又涉及到一个Hook入口，即`Filter`，但是我不知道它的使用场景。
 
