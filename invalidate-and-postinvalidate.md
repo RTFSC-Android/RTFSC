@@ -1,4 +1,4 @@
-# invalidate与postInvalidate的关系与区别
+# invalidate和postInvalidate的关系与区别
 
 
 从源码角度分析 invalidate 与 postInvalidate 之间的关系区别。  
