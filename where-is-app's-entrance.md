@@ -1,5 +1,8 @@
 # Android应用的程序入口是哪里？
 
+
+## 引言 
+
 一般我们都会认为Application的 onCreate 方法就是入口了，毕竟它算是第一个回调，我们通常在那做初始化。
 
 不过 Application 的 onCreate 真的是程序的入口吗？它是什么时候调用被谁调用的呢？  
@@ -149,4 +152,4 @@ BONUS：另外我们还顺带发现了另外一个问题的答案：**主线程�
 
 答案显而易见： ActivityThread.main 。
 
-ActivityThread 非常重要，后续还会讲更多关于它的知识。  
+ActivityThread 非常重要，它更是我们常说的`mainThread`！后续还会讲更多关于它的知识。  

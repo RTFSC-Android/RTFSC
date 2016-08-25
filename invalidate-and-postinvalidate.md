@@ -1,8 +1,15 @@
 # invalidate和postInvalidate的关系与区别
 
 
-从源码角度分析 invalidate 与 postInvalidate 之间的关系区别。  
+## 引言
 
+当我们需要重绘一个 View 的时候（走 draw ），我们有两个方法可供选择，invalidate 和 postInvalidate。
+
+那么它们之间的关系与区别是什么呢？
+
+本篇从源码角度分析 invalidate 与 postInvalidate 之间的关系区别。  
+
+## 分析
 
 `invalidate`的代码调用路径：
 
