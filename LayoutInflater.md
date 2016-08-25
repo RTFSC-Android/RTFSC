@@ -22,7 +22,7 @@
 View view = LayoutInflater.from(context).inflate(R.layout.resource,root,flase);	
 ```
 
-PS：`LayoutInflater`的获取方式还有很多种。  
+PS：`LayoutInflater`的获取方式还有很多种，实际最终调用的是 Context.getSystemService 方法，关于getSystemService 的分析，有兴趣的可以看看[Context.getSystemService分析](context-getsystemservice.md)。  
 
 
 上述代码我写过无数遍，但是心中一直有很多疑问：  
