@@ -1,8 +1,5 @@
 # Android应用的程序入口是哪里？
 
-
-本文有错！！！！需要更新！不过暂时没时间- - 2016.8.26
-
 ## 引言 
 
 一般我们都会认为Application的 onCreate 方法就是入口了，毕竟它算是第一个回调，我们通常在那做初始化。
@@ -69,60 +66,28 @@ public static void main(String[] args) {
 
 // 从 main 方法过来的是 false PS：另外一个方法 systemMain()中会传入 true
 private void attach(boolean system) {
+    
     sCurrentActivityThread = this;
     mSystemThread = system;
+
     if (!system) {
-        // 因为是 flase，所以省略了这里的代码
-    } else {
-        // Don't set application object here -- if the system crashes,
-        // we can't display an alert, we just want to die die die. 哈哈 这么想 die
-        android.ddm.DdmHandleAppName.setAppName("system_process",
-                UserHandle.myUserId());
+        // false 走这里
+        // ... 
+        // 重要的在这里
+        final IActivityManager mgr = ActivityManagerNative.getDefault();
         try {
-        	// 实例化 Instrumentation
-            mInstrumentation = new Instrumentation();
-            // 创建 contextImpl
-            ContextImpl context = ContextImpl.createAppContext(
-                    this, getSystemContext().mPackageInfo);
-            // 在这里创建 Application 并且调用它的 onCreate
-            mInitialApplication = context.mPackageInfo.makeApplication(true, null);
-            mInitialApplication.onCreate();
-        } catch (Exception e) {
-        	// 有没有在重复多次点击 run 跑 app 的时候遇到过这个错？
-            throw new RuntimeException(
-                    "Unable to instantiate Application():" + e.toString(), e);
+            mgr.attachApplication(mAppThread);
+        } catch (RemoteException ex) {
+            // Ignore
         }
+        //...BinderInternal.addGcWatcher(new Runnable() {});
+            
+    } else {
+        //... 不走这里 省略
     }
 
-    // add dropbox logging to libcore
-    DropBox.setReporter(new DropBoxReporter());
+    //... ViewRootImpl.addConfigCallback  onConfigurationChanged
 
-    ViewRootImpl.addConfigCallback(new ComponentCallbacks2() {
-        @Override
-        public void onConfigurationChanged(Configuration newConfig) {
-            synchronized (mResourcesManager) {
-                // We need to apply this change to the resources
-                // immediately, because upon returning the view
-                // hierarchy will be informed about it.
-                if (mResourcesManager.applyConfigurationToResourcesLocked(newConfig, null)) {
-                    // This actually changed the resources!  Tell
-                    // everyone about it.
-                    if (mPendingConfiguration == null ||
-                            mPendingConfiguration.isOtherSeqNewer(newConfig)) {
-                        mPendingConfiguration = newConfig;
-
-                        sendMessage(H.CONFIGURATION_CHANGED, newConfig);
-                    }
-                }
-            }
-        }
-        @Override
-        public void onLowMemory() {
-        }
-        @Override
-        public void onTrimMemory(int level) {
-        }
-    });
 }
 ```
 
@@ -130,17 +95,129 @@ private void attach(boolean system) {
 
 ActivityThread 的 main 方法中，主要做了以下步骤(挑重点)：
 
-- 为主线程准备 Looper 
-- 实例化 ActivityThread 并调用它的 attach 方法
-- 在 attach 方法中，又做了如下几件事
-	- 创建 Instrumentation 实例
-	- 创建 ContextImpl
-	- 创建 Application，并调用它的 onCreate
-- 把主线程的Handler `sMainThreadHandler` 赋值为 ActivityThread.mH 
-- Looper.loop();
+- 1.为主线程准备 Looper 
+- 2.实例化 ActivityThread 并调用它的 attach 方法
+- 3.在 attach 方法中，又做了如下几件事
+	- 1.获取 IActivityManager mgr
+	- 2.调用 mgr.attachApplication
+- 4. 把主线程的Handler `sMainThreadHandler` 赋值为 ActivityThread.mH 
+- 5. Looper.loop(); 循环消息
 
 
-可以看到上面所说的步骤都非常重要，主线程Looper的创建、ContextImpl的创建、Application的创建以及onCreate 回调，这些都跟 App 息息相关。  
+在3.2步骤中进行了非常复杂的操作，各种交互，这里不展开，最后在启动我们的启动页的时候，最终会调用到 ActivityThread.performLaunchActivity 方法。
+
+
+```
+private Activity performLaunchActivity(ActivityClientRecord r, Intent customIntent) {
+    // System.out.println("##### [" + System.currentTimeMillis() + "] ActivityThread.performLaunchActivity(" + r + ")");
+
+    //...
+
+    Activity activity = null;
+    try {
+        java.lang.ClassLoader cl = r.packageInfo.getClassLoader();
+        // 创建 activity
+        activity = mInstrumentation.newActivity(
+                cl, component.getClassName(), r.intent);
+        StrictMode.incrementExpectedActivityCount(activity.getClass());
+        r.intent.setExtrasClassLoader(cl);
+        r.intent.prepareToEnterProcess();
+        if (r.state != null) {
+            r.state.setClassLoader(cl);
+        }
+    } catch (Exception e) {
+        //...
+    }
+
+    try {
+        // 创建 App 方法的实现看后面
+        Application app = r.packageInfo.makeApplication(false, mInstrumentation);
+        //...
+        if (activity != null) {
+            Context appContext = createBaseContextForActivity(r, activity);
+            CharSequence title = r.activityInfo.loadLabel(appContext.getPackageManager());
+            //...
+            // 调用 activity.attach
+            activity.attach(appContext, this, getInstrumentation(), r.token,
+                    r.ident, app, r.intent, r.activityInfo, title, r.parent,
+                    r.embeddedID, r.lastNonConfigurationInstances, config,
+                    r.referrer, r.voiceInteractor);
+
+            //...
+            //...调用Activity 的生命周期等  mInstrumentation.callActivityOnCreate
+            
+        }
+        r.paused = true;
+
+        mActivities.put(r.token, r);
+
+    } catch (SuperNotCalledException e) {
+        throw e;
+    } catch (Exception e) {
+       //...
+    }
+    return activity;
+}
+
+// LoadedApk.makeApplication
+public Application makeApplication(boolean forceDefaultAppClass,
+        Instrumentation instrumentation) {
+    //保证了 Application 单例
+    if (mApplication != null) {
+        return mApplication;
+    }
+
+    Application app = null;
+
+    String appClass = mApplicationInfo.className;
+    if (forceDefaultAppClass || (appClass == null)) {
+        appClass = "android.app.Application";
+    }
+
+    try {
+        java.lang.ClassLoader cl = getClassLoader();
+        if (!mPackageName.equals("android")) {
+            initializeJavaContextClassLoader();
+        }
+        // 创建 ContextImpl
+        ContextImpl appContext = ContextImpl.createAppContext(mActivityThread, this);
+        // 创建我们的 Application
+        app = mActivityThread.mInstrumentation.newApplication(
+                cl, appClass, appContext);
+        appContext.setOuterContext(app);
+    } catch (Exception e) {
+        //...
+    }
+    mActivityThread.mAllApplications.add(app);
+    mApplication = app;
+
+    if (instrumentation != null) {
+        try {
+            // 调用 ApplicationOnCreate
+            instrumentation.callApplicationOnCreate(app);
+        } catch (Exception e) {
+            //...
+        }
+    }
+    //....  Rewrite the R 'constants' for all library apks.
+    // Rewrite the R 'constants' for all library apks.
+
+    return app;
+}
+
+// Instrumentation
+public void callApplicationOnCreate(Application app) {
+    app.onCreate();
+}
+```
+
+代码稍微有点多，删减了大部分暂时不关心的代码。
+
+可以看到
+
+Instrumentation.newApplication 创建了 Application，Instrumentation.callApplicationOnCreate 里调用了 Application 的 onCreate。
+
+看到上面所说的步骤都非常重要，主线程Looper的创建、ContextImpl的创建、Application的创建以及onCreate 回调，这些都跟 App 息息相关。  
 
 也解答了我们之前的疑问。
 
@@ -148,7 +225,7 @@ ActivityThread 的 main 方法中，主要做了以下步骤(挑重点)：
 
 **对于一个 App 来说其实 ActivityThread.main 才是真正的入口。**(Java层面)  
 
-**Application 的创建以及 onCreate 都在 ActivityThread.attach 方法中。
+**Application 的创建以及 onCreate 的回调，都由 Instrumentation掌控。(ActivityThread.LoadedApk.makeApplication 方法中)
 
 BONUS：另外我们还顺带发现了另外一个问题的答案：**主线程的 Looper 是什么时候实例化的？** 
 

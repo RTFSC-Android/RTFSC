@@ -9,7 +9,12 @@
 PhoneWindow.DecorView mDecor;
 
 
+Instrumentation
+
+LoadedApk
 
 ActivityThread 
+ActivityThread$H
+ActivityThread$ActivityClientRecord
 
 ViewRootImpl
