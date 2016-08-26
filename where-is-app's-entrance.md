@@ -225,7 +225,7 @@ Instrumentation.newApplication 创建了 Application，Instrumentation.callAppli
 
 **对于一个 App 来说其实 ActivityThread.main 才是真正的入口。**(Java层面)  
 
-**Application 的创建以及 onCreate 的回调，都由 Instrumentation掌控。(ActivityThread.LoadedApk.makeApplication 方法中)
+**Application 的创建以及 onCreate 的回调，都由 Instrumentation掌控。**(ActivityThread.LoadedApk.makeApplication 方法中)
 
 BONUS：另外我们还顺带发现了另外一个问题的答案：**主线程的 Looper 是什么时候实例化的？** 
 
