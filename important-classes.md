@@ -18,3 +18,9 @@ ActivityThread$H
 ActivityThread$ActivityClientRecord
 
 ViewRootImpl
+
+
+WindowManager
+WindowManagerImpl.addView
+ WindowManagerGlobal.addView
+  ViewRootImpl.setView
