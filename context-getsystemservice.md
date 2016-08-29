@@ -91,7 +91,7 @@ static{
 我挑了两个例子展示，省略了其他的系统服务注册代码，因为实际上，生成系统服务，就这两种方式：
 
 1. 一种是 直接实例化对象，如`PhoneLayoutInflater`是直接`new`出来的。  
-2，另外一种是从`ServiceManager.getService(String)`获取的。
+2. 另外一种是从`ServiceManager.getService(String)`获取的。
 
 PS：ServiceManager 涉及到了 ServiceManagerNative、Binder、Binder 驱动等相关知识，非常复杂，这里不展开去研究，以后会有机会讲。
 
