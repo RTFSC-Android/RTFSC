@@ -1,29 +1,29 @@
-# Android应用程序的入口是哪里？
+# ActivityThread
 
-## 引言 
+在这里记录我对 ActivityThread 的认知。
 
-一般我们都会认为Application的 onCreate 方法就是入口了，毕竟它算是第一个回调，我们通常在那做初始化。
+## 简介
 
-不过 Application 的 onCreate 真的是程序的入口吗？它是什么时候调用被谁调用的呢？  
+	package android.app;
+	public final class ActivityThread 
 
-我们知道 Android 基于 Java，而 Java 的入口其实是一个 `main` 方法，那么App的 `main` 方法在哪里呢？  
 
-所以，显然，入口并不是 Application.onCreate。
+在[Android应用程序的入口是哪里？](./where-is-app's-entrance.md)中已经有过简单介绍。
 
-那么又是哪里呢？  
 
-这里要涉及到一个类`ActivityThread`，它拥有这个`main`方法。  
+ActivityThread 在很多文章中常被称为 主线程。
 
-让我们一探究竟。 
+这个说法并不准确，因为其实它并不是一个线程，只是主线程调用了AactivityThread的main方法，所以我觉得把 ActivityThread 称作『主线程的入口』会更加合适一些。
 
-## ActivityThread的main方法
+	PS: AactivityThread的main方法是在 ZygoteInit.invokeStaticMain 中通过反射调用。
 
-ActivityThread 位于`android.app`包下。
+
+
+## ActivityThread.main 分析
 
 来看一下`main`方法：  
 
 ```
-// android.app.ActivityThread
 public static void main(String[] args) {
     Trace.traceBegin(Trace.TRACE_TAG_ACTIVITY_MANAGER, "ActivityThreadMain");
     SamplingProfilerIntegration.start();
@@ -73,7 +73,7 @@ private void attach(boolean system) {
     if (!system) {
         // false 走这里
         // ... 
-        // 重要的在这里
+        // 重要的在这里 
         final IActivityManager mgr = ActivityManagerNative.getDefault();
         try {
             mgr.attachApplication(mAppThread);
@@ -93,26 +93,34 @@ private void attach(boolean system) {
 
 暂时先不管那些个看不懂的方法，挑我们看得懂的。    
 
-ActivityThread 的 main 方法中，主要做了以下步骤(挑重点)：
+ActivityThread 的 main 方法中，主要做了以下步骤(挑了重点)：
 
-- 1.为主线程准备 Looper 
+- 1.为主线程准备了 Looper 
 - 2.实例化 ActivityThread 并调用它的 attach 方法
 - 3.在 attach 方法中，又做了如下几件事
-	- 1.获取 IActivityManager mgr
-	- 2.调用 mgr.attachApplication
+	- 1.获取 IActivityManager mgr 
+	- 2.调用 mgr.attachApplication (涉及到 AMS与 IApplicationThread 的交互)
 - 4. 把主线程的Handler `sMainThreadHandler` 赋值为 ActivityThread.mH 
 - 5. Looper.loop(); 循环消息
 
 
-在3.2步骤中进行了非常复杂的操作，各种交互，这里不展开，最后在启动我们的启动页的时候，最终会调用到 ActivityThread.performLaunchActivity 方法。
+从以上步骤来看，ActivityThread 对 App 的重要程度可见一斑。
+
+
+再看 ActivityThread 的方法，有一系列的`performXXXActivity`和`handleXXXActivity`。
+
+其实在 Activity 的启动流程中，ActivityThread的IApplicationThread 与 AMS 的交互最后都会走到 ActivityThread 来。
+
+比如启动一个 Activity，会调用到 ActivityThread.performLaunchActivity 方法，已这个方法为例。
+
+## performLaunchActivity 分析
 
 
 ```
+//ActivityThread
 private Activity performLaunchActivity(ActivityClientRecord r, Intent customIntent) {
     // System.out.println("##### [" + System.currentTimeMillis() + "] ActivityThread.performLaunchActivity(" + r + ")");
-
     //...
-
     Activity activity = null;
     try {
         java.lang.ClassLoader cl = r.packageInfo.getClassLoader();
@@ -130,7 +138,7 @@ private Activity performLaunchActivity(ActivityClientRecord r, Intent customInte
     }
 
     try {
-        // 创建 App 方法的实现看后面
+        // 创建 App 方法的实现看后面 是个 单例实现
         Application app = r.packageInfo.makeApplication(false, mInstrumentation);
         //...
         if (activity != null) {
@@ -193,7 +201,7 @@ public Application makeApplication(boolean forceDefaultAppClass,
 
     if (instrumentation != null) {
         try {
-            // 调用 ApplicationOnCreate
+            // 调用 Application.OnCreate
             instrumentation.callApplicationOnCreate(app);
         } catch (Exception e) {
             //...
@@ -219,24 +227,10 @@ Instrumentation.newApplication 创建了 Application，Instrumentation.callAppli
 
 看到上面所说的步骤都非常重要，主线程Looper的创建、ContextImpl的创建、Application的创建以及onCreate 回调，这些都跟 App 息息相关。  
 
-也解答了我们之前的疑问。
 
 ## 小结
 
-**对于一个 App 来说其实 ActivityThread.main 才是真正的入口。**
-
-**UPDATE：上一句话的描述不太准确，对于ActivityThread是否是入口，有所争论，具体可以看后面我在知乎上的提问。**
-
-**Application 的创建以及 onCreate 的回调，都由 Instrumentation掌控。**(ActivityThread.LoadedApk.makeApplication 方法中)
-
-BONUS：另外我们还顺带发现了另外一个问题的答案：**主线程的 Looper 是什么时候实例化的？** 
-
-答案显而易见： ActivityThread.main 。
-
-ActivityThread 非常重要，它更是我们常说的`mainThread`！后续还会讲更多关于它的知识。 
-
-## See Also
-
-我在知乎上的提问：[Android 应用的真正入口是哪里？](https://www.zhihu.com/question/50828920)
-
-
+ActivityThread
+Instrumentation
+LoadedApk
+IApplicationThread
