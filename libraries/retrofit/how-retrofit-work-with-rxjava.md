@@ -139,13 +139,17 @@ private final Map<Method, ServiceMethod> serviceMethodCache = new LinkedHashMap<
 
 
 
-## callAdapter.adapt流程分析
+## OkHttpCall 
 
 
 
 再接下去往后看`OkHttpCall okHttpCall = new OkHttpCall<>(serviceMethod, args);`，是再为 ServiceMethod 以及 args(参数)生成了一个 `OkHttpCall`。
 
-从 `OkHttpCall` 这个名字来看就能猜到，它是对 `OkHttp3.Call` 的包装,事实上，它确实是。(`OkHttpCall`中有一个成员`okhttp3.Call rawCall`)。
+从 `OkHttpCall` 这个名字来看就能猜到，它是对 `OkHttp3.Call` 的组合包装,事实上，它也确实是。(`OkHttpCall`中有一个成员`okhttp3.Call rawCall`)。
+
+
+
+## callAdapter.adapt流程分析
 
 
 
@@ -155,7 +159,7 @@ private final Map<Method, ServiceMethod> serviceMethodCache = new LinkedHashMap<
 
 
 
-来分析一下，这里涉及到的 `callAdapter`,是由我们配置 Retrofit 的 addCallAdapterFactory方法中传入的`RxJavaCallAdapterFactory.create()`生成，实例为`RxJavaCallAdapterFactory`。
+来分析一下，这里涉及到的 `callAdapter`,是由我们配置 Retrofit 的 `addCallAdapterFactory`方法中传入的`RxJavaCallAdapterFactory.create()`生成，实例为`RxJavaCallAdapterFactory`。
 
 实例的生成大致流程为：  
 
@@ -165,13 +169,9 @@ ServiceMethod.Bulider.Build()->ServiceMethod.createCallAdapter()->retrofit.callA
 
 
 
-由于使用了 RxJava ，我们最终得到的 `callAdapter` 为 `SimpleCallAdapter`，所以接下去分析它的 `adapt` 方法：
+由于使用了 RxJava ，我们最终得到的 `callAdapter` 为 `SimpleCallAdapter`，所以接下去分析`SimpleCallAdapter`的 `adapt` 方法：
 
-
-
-这里涉及到的 CallOnSubscriber 后面有给出：
-
-
+这里涉及到的 `CallOnSubscriber` 后面有给出：
 
 ```java
     @Override public <R> Observable<R> adapt(Call<R> call) {
@@ -310,19 +310,19 @@ SimpleCallAdapter.adapt 很简单，创建一个 Observable获取CallOnSubscribe
 
 对于之前的疑问可以作答了。
 
-##### 第一个疑问: 我们调用接口的方法后是怎么发送请求的？这背后发生了什么？
+#### 第一个疑问: 我们调用接口的方法后是怎么发送请求的？这背后发生了什么？
 
 Retrofit 使用了动态代理给我们定义的接口设置了代理，当我们调用接口的方法时，Retrofit 会拦截下来，然后经过一系列处理，比如解析方法的注解等，生成了 Call Request 等OKHttp所需的资源，最后交给 OkHttp 去发送请求， 此间经过 callAdapter,convertr 的处理，最后拿到我们所需要的数据。
 
 
 
-##### 第二个疑问: Retrofit 与 OkHttp 是怎么合作的？
+#### 第二个疑问: Retrofit 与 OkHttp 是怎么合作的？
 
 在Retrofit 中，ServiceMethod 承载了一个 Http 请求的所有参数，OkHttpCall 为 okhttp3.call 的组合包装，由它们俩合作，生成用于 OkHttp所需的 Request以及okhttp3.Call，交给 OkHttp 去发送请求。(在本文环境下具体用的是 `call.execute()`)
 
 可以说 Retrofit 为 OkHttp 再封装了一层，并增添了不少功能以及扩展，减少了开发使用成本。
 
-##### 第三个疑问: Retrofit 中的数据究竟是怎么处理的？它是怎么返回  RxJava.Observable 的？
+#### 第三个疑问: Retrofit 中的数据究竟是怎么处理的？它是怎么返回  RxJava.Observable 的？
 
 Retrofit 中的数据其实是交给了 callAdapter 以及 converter 去处理，callAdapter 负责把 okHttpCall 转成我们所需的 Observable类型(本文环境),converter负责把服务器返回的数据转成具体的实体类。
 
