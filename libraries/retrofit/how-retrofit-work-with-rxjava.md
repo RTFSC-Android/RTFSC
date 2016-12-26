@@ -106,7 +106,11 @@ Retrofit的`create`方法作为 Retrofit 的入口，当然得第一个分析。
 
 ## ServiceMethod的职责以及 loadServiceMethod分析
 
-先分析` loadServiceMethod`，比较简单。  
+我认为 ServiceMethod 是接口**具体方法的抽象**，它主要负责解析它对应的 `method` 的各种参数（它有各种如 `parseHeaders` 的方法），比如注解（@Get），入参，另外还负责获取 callAdapter,responseConverter等Retrofit配置，好为后面的`okhttp3.Request`做好参数准备，它的`toRequest`为 OkHttp 提供 Request，可以说它承载了后续 Http 请求所需的一切参数。
+
+
+
+再分析` loadServiceMethod`，比较简单。  
 
 ```java
 // serviceMethodCache 的定义
@@ -131,9 +135,7 @@ private final Map<Method, ServiceMethod> serviceMethodCache = new LinkedHashMap<
 
 `loadServiceMethod`方法，负责 为 `method` 生成一个 ServiceMethod ，并且给 ServiceMethod 做了缓存。
 
-这里看上去只是做了简单的缓存，实际上在实例化 ServiceMethod 的时候做了很多事。这需要再讲一下ServiceMethod的职责，它主要负责解析它对应的 `method` 的各种参数（各种如 `parseHeaders` 的方法），比如注解（@Get），入参，另外还负责获取 callAdapter,responseConverter等Retrofit配置，好为后面的`okhttp3.Request`做好参数准备。
-
-注：动态代理是有一定的性能损耗的，并且ServiceMethod 的创建伴随着各种注解参数解析，也是耗时间的。如果每次接口请求都需要重新生成那么有浪费资源拖慢性能的可能，所以这里做了一份缓存来提高效率。
+动态代理是有一定的性能损耗的，并且ServiceMethod 的创建伴随着各种注解参数解析，这也是耗时间的，在加上一个 App 调用接口是非常频繁的，如果每次接口请求都需要重新生成那么有浪费资源损害性能的可能，所以这里做了一份缓存来提高效率。
 
 
 
