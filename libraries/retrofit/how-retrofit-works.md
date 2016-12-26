@@ -1,4 +1,4 @@
-# [Retrofit](https://square.github.io/retrofit/)是如何工作的？与RxJava又是怎么合作的？
+# Retrofit是如何工作的？
 
 > 注：本文基于 Retrofit2.0版本，并配合 RxJava 来分析。
 >
@@ -12,11 +12,7 @@
 
 ​	[Retrofit](https://square.github.io/retrofit/) adapts a Java interface to HTTP calls by using annotations on the declared 	methods to how requests are made.
 
-
-
-本文主要通过分析 **Retrofit 与 RxJava 的合作流程** 来深入理解 Retrofit的工作原理，并且解答自己心中的疑惑。虽然可能有很多人已经分析过了，但那都是别人的，与我无关。
-
-
+本文主要通过分析 **Retrofit 与 RxJava 的合作流程** 来深入理解 Retrofit的工作原理，并且解答自己心中的疑惑。
 
 #### 疑惑
 
