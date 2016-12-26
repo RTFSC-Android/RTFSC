@@ -173,7 +173,7 @@ ServiceMethod.Bulider.Build()
 
    ->adapterFactories遍历
 
-​     ->最终到RxJavaCallAdapterFactory.create().get()
+​     ->最终到RxJavaCallAdapterFactory.get()#getCallAdapter()
 
 ​       ->return `return new SimpleCallAdapter(observableType, scheduler);`
 
