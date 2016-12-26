@@ -165,7 +165,17 @@ private final Map<Method, ServiceMethod> serviceMethodCache = new LinkedHashMap<
 
 
 
-ServiceMethod.Bulider.Build()->ServiceMethod.createCallAdapter()->retrofit.callAdapter()->adapterFactories遍历->最终到RxJavaCallAdapterFactory.create().get()->return `return new SimpleCallAdapter(observableType, scheduler);`
+ServiceMethod.Bulider.Build()
+
+ ->ServiceMethod.createCallAdapter()
+
+  ->retrofit.callAdapter()
+
+   ->adapterFactories遍历
+
+​     ->最终到RxJavaCallAdapterFactory.create().get()
+
+​       ->return `return new SimpleCallAdapter(observableType, scheduler);`
 
 
 
