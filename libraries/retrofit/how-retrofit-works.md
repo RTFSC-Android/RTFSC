@@ -304,7 +304,7 @@ SimpleCallAdapter.adapt 很简单，创建一个 Observable获取CallOnSubscribe
 
 ## 流程分析流程图总结
 
-总体的流程图整理如下：
+分析结束，总体的流程图整理如下：
 
 
 
