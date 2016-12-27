@@ -22,7 +22,7 @@ ActivityThread 位于`android.app`包下。
 
 来看一下`main`方法：  
 
-```
+```Java
 // android.app.ActivityThread
 public static void main(String[] args) {
     Trace.traceBegin(Trace.TRACE_TAG_ACTIVITY_MANAGER, "ActivityThreadMain");
@@ -98,8 +98,8 @@ ActivityThread 的 main 方法中，主要做了以下步骤(挑重点)：
 - 1.为主线程准备 Looper 
 - 2.实例化 ActivityThread 并调用它的 attach 方法
 - 3.在 attach 方法中，又做了如下几件事
-	- 1.获取 IActivityManager mgr
-	- 2.调用 mgr.attachApplication
+  - 1.获取 IActivityManager mgr
+  - 2.调用 mgr.attachApplication
 - 4. 把主线程的Handler `sMainThreadHandler` 赋值为 ActivityThread.mH 
 - 5. Looper.loop(); 循环消息
 
@@ -215,7 +215,7 @@ public void callApplicationOnCreate(Application app) {
 
 可以看到
 
-Instrumentation.newApplication 创建了 Application，Instrumentation.callApplicationOnCreate 里调用了 Application 的 onCreate。
+`Instrumentation.newApplication` 创建了 Applicationd的实例，`Instrumentation.callApplicationOnCreate` 里调用了 `Application.onCreate`。
 
 看到上面所说的步骤都非常重要，主线程Looper的创建、ContextImpl的创建、Application的创建以及onCreate 回调，这些都跟 App 息息相关。  
 
