@@ -1,6 +1,22 @@
 # Activity的启动流程
 
 
+妈的 老子不信搞不懂。
+
+Activity的启动流程涉及到 进程的创建 Application的创建 ActivityStack 的创建 Activity 的创建
+
+
+涉及到的类有:
+
+- Context 通常是我们 startActivity 的第一步，具体的实现类是 ContextImpl。
+- ActivityManagerService 
+- ActivityThread 
+- ActivityThread.H 是一个运行在主线的Handler，负责把 ApplicationThread 从 AMS 拿来的通知转换到主线程，并调用 ActivityThread 相应的方法。  
+- ActivityThread.ApplicationThread 是一个实现了 IApplicationThread 的Binder类，是 ActivityThread 与 AMS 交互通信的媒介。AMS 通过它来告知 ActivityThread 该做什么。它最后会把 AMS 的通知都交给 ActivityThread.H 转换成 Message，转到 ActivityThread 去执行。
+- Instrumentation  负责创建Activity，并调用 Activity 的生命周期 eg: mInstrumentation.newActivity ,mInstrumentation.callActivityOnCreate
+- ActivityStackSupervisor 
+
+
 //todo 详细的分析
 
 

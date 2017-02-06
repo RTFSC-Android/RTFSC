@@ -1,4 +1,4 @@
-# Zygote
+# ZygoteInit
 
 
 	com.android.internal.os.ZygoteInit
@@ -31,3 +31,13 @@ at java.lang.reflect.Method.invoke(Method.java:372)
 at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:910)
 at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:705)
 ```
+
+
+Android 准备完 Native 环境后，在启动 zygote 进程过程中调用了 Java 世界的 ZygoteInit 的 main 方法，并且传入`com.anddroid.internal.os.ZygoteInit`和`true`两个参数。
+
+
+
+
+
+
+
