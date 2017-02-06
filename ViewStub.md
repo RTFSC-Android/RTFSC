@@ -1,7 +1,7 @@
 # ViewStub 源码分析
 
 
-## 简介
+## ViewStub简介
 
 
 	public final class ViewStub extends View 

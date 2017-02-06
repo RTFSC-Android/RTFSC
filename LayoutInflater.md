@@ -12,7 +12,7 @@
 	public abstract class LayoutInflater
 
 
-从名字就可以看出它用于加载布局。  
+`LayoutInflater`,从名字就可以看出它用于加载布局。  
 
 
 我们常用的方式大概如下：  
