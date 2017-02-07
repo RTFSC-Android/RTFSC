@@ -55,11 +55,11 @@ ContextImpl.startActivity/Activity.startActivity
 
 心好累，还是有很多很多细节没有理清楚。
 
-ActivityManagerService 与 ActivityThread 之间用 ApplicationThread 来交互。
+
+真正去启动 Activity 的是 ActivityStackSupervisor.realStartActivityLocked。
 
 
 ActivityStack或ActivityStackSupervisor 里会调用 ActivityRecod.app.thread (IApplicationThread)的 `scheduleXXXXActivity`比如 `schedulePauseActivity`
-
 
 
 [](http://blog.csdn.net/luoshengyang/article/details/6689748)

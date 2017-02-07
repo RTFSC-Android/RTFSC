@@ -15,7 +15,7 @@ ActivityThread 在很多文章中常被称为 主线程。
 
 这个说法并不准确，因为其实它并不是一个线程，只是主线程调用了AactivityThread的main方法，所以我觉得把 ActivityThread 称作『主线程的入口』会更加合适一些。
 
-	PS: AactivityThread的main方法是在 ZygoteInit.invokeStaticMain 中通过反射调用。
+	PS: ActivityThread的main方法是在 ZygoteInit.invokeStaticMain 中通过反射调用。
 
 
 
@@ -105,7 +105,6 @@ ActivityThread 的 main 方法中，主要做了以下步骤(挑了重点)：
 
 
 从以上步骤来看，ActivityThread 对 App 的重要程度可见一斑。
-
 
 再看 ActivityThread 的方法，有一系列的`performXXXActivity`和`handleXXXActivity`。
 

@@ -162,6 +162,8 @@ private void installDecor() {
         }
     }
 }
+```
+
 
 这边可以看到 Decor 其实是 DecorView，瞥一眼它的定义：
 
