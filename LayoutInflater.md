@@ -235,7 +235,7 @@ public void addView(View child, int index) {
 
 第二种 当`root`为`null`的时候：  
 
-是`null`的时候会返回`temp` （XML里的根布局）后者
+是`null`的时候会返回`temp` （XML里的根布局）
 
 ```
 // null 或是 false 那么result=temp
