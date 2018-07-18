@@ -369,7 +369,7 @@ View createViewFromTag(View parent, String name, Context context, AttributeSet a
 
 ## onCreateView 与 createView
 
-初步来看`onCreateView`方法负责创建自定义View，而`createView`方法负责创建系统自带的View。
+初步来看`createView`方法负责创建自定义View，而`onCreateView`方法负责创建系统自带的View。
 但是感觉比较奇怪，因为不管是什么View，创建的套路应该是一样才对啊~ 
 感觉有诈！
 
