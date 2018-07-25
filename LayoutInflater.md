@@ -204,7 +204,7 @@ public View inflate(XmlPullParser parser, @Nullable ViewGroup root, boolean atta
 
 1. 用户完全自定义 自己 `new` 出来
 2. ViewGroup.generateLayoutParams 方法生成 上面已经提到
-3. ViewGroup.generateDefaultLayoutParams 方法生成，在`addView`的时候 如果 `childView` 没有的话 LayoutParams 属性的话，会由这个方法生成。
+3. ViewGroup.generateDefaultLayoutParams 方法生成，在`addView`的时候 如果 `childView` 没有 LayoutParams 属性的话，会由这个方法生成。
 
 来看一下 addView 里对 paramas 的操作就明白了：
 
@@ -230,7 +230,7 @@ public void addView(View child, int index) {
 
 所以当 root 不为 null 的时候，topview 的 paramas 是通过`generateLayoutParams`生成的。  
 
-需要注意的是：`generateLayoutParams`与`generateDefaultLayoutParams`生成的 paramas 是不同的,会无视我们在 xml 里配置的属性，所以它会影响到布局效果。  
+需要注意的是：`generateLayoutParams`与`generateDefaultLayoutParams`生成的 paramas 是不同的,前者需要传入子被添加的`View`的`AttributeSet`类型的`attrs`属性（也就是xml里配置的属性）作为参数来创建`LayoutParams`,而后者则无需传参，会无视我们在 xml 里配置的属性，所以它会影响到布局效果。  
 
 
 第二种 当`root`为`null`的时候：  
@@ -369,7 +369,7 @@ View createViewFromTag(View parent, String name, Context context, AttributeSet a
 
 ## onCreateView 与 createView
 
-初步来看`onCreateView`方法负责创建自定义View，而`createView`方法负责创建系统自带的View。
+初步来看`createView`方法负责创建自定义View，而`onCreateView`方法负责创建系统自带的View。
 但是感觉比较奇怪，因为不管是什么View，创建的套路应该是一样才对啊~ 
 感觉有诈！
 
